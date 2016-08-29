@@ -747,4 +747,4 @@ var updateLabelDiffTime = function() {
     });
 };
 
-window.setInterval(updateLabelDiffTime, 3000);
+window.setInterval(updateLabelDiffTime, 30000);
