@@ -127,7 +127,22 @@ class Gym(BaseModel):
     latitude = FloatField()
     longitude = FloatField()
     last_modified = DateTimeField()
+    
+    @classmethod
+    def get_active(cls):
+        query = (Gym
+                 .select()
+                 .where(Gym.latitude < request.values.get('boundary-north', type=float))
+                 .where(Gym.latitude > request.values.get('boundary-south', type=float))
+                 .where(Gym.longitude > request.values.get('boundary-west', type=float))
+                 .where(Gym.longitude < request.values.get('boundary-east', type=float))
+                 .dicts())
 
+        gyms = []
+        for p in query:
+            gyms.append(p)
+
+        return gyms
 
 def parse_map(map_dict):
     pokemons = {}

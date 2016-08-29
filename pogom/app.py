@@ -176,7 +176,7 @@ class Pogom(Flask):
         # TODO: Lured pokestops
 
         if request.args.get('gyms', 'true') == 'true':
-            d['gyms'] = Gym.get_all()
+            d['gyms'] = Gym.get_active()
 
         return jsonify(d)
 
