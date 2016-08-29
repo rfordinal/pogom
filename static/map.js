@@ -511,12 +511,12 @@ function updateMap() {
 //			i_x=i_x.toFixed(3);
 			squares = squares + 1;
 			var i_x_=i_x.toFixed(3);
-			var i_x_to_ = (i_x_ + boundary_round);
-//				i_x_to_ = i_x_to_.toFixed(3);
+			var i_x_to_ = (i_x + boundary_round);
+				i_x_to_ = i_x_to_.toFixed(3);
 			var i_y_=i_y.toFixed(3);
-			var i_y_to_ = (i_y_ + boundary_round);
-//				i_y_to_ = i_y_to_.toFixed(3);
-			console.log(' square[' + squares + '] x=' + i_x_ + ' y=' + i_y_);
+			var i_y_to_ = (i_y + boundary_round);
+				i_y_to_ = i_y_to_.toFixed(3);
+			console.log(' square[' + squares + '] x=' + i_x_ + '-' + i_x_to_ + ' y=' + i_y_ + '-' + i_y_to_);
 			// square start
 	
     $.ajax({
