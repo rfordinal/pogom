@@ -10,7 +10,6 @@ var $selectExclude = $("#exclude-pokemon");
 var excludedPokemon = [];
 
 var map;
-var rectangle;
 var scanLocations = new Map();
 var coverCircles = [];
 var newLocationMarker;
@@ -160,20 +159,15 @@ function initMap() {
     map = new google.maps.Map(document.getElementById('map'), {
         // Change this to geolocation?
         center: {lat: initLat, lng: initLng},
-        zoom: 16,
+        zoom: 13,
         mapTypeControl: false,
         streetViewControl: false,
         disableAutoPan: true
     });
-	 rectangle = new google.maps.Rectangle();
 
     updateScanLocations(initialScanLocations);
     updateMap();
     updateHeatMap();
-
-	 google.maps.event.addListener(map, 'idle', function(event) {
-		updateMap();
-    });
 
     if(is_logged_in()) {
         // on click listener for
@@ -465,71 +459,11 @@ function updateScanLocations(updatedScanLocations) {
 //               'pokestops': document.getElementById('pokestops-checkbox').checked,
 //               'pokestops-lured': document.getElementById('pokestops-lured-checkbox').checked,
 function updateMap() {
-	if (!map){return}
-	if (!map.getBounds()){return}
-	var boundary_north = map.getBounds().getNorthEast().lat(); // y
-	var boundary_west = map.getBounds().getSouthWest().lng(); // x
-	var boundary_south = map.getBounds().getSouthWest().lat(); // y
-	var boundary_east = map.getBounds().getNorthEast().lng(); // x
-	var zoom = map.getZoom();
-	
-	var boundary_round = 0.005; // 0.002
-	
-	if (zoom >= 18){boundary_round = 0.05;}
-	else if (zoom >= 16){boundary_round = 0.03;}
-	else if (zoom >= 10){boundary_round = 0.2;}
-	else {boundary_round = 0.5}
-	
-	boundary_north = Math.floor((boundary_north+boundary_round) / boundary_round) * boundary_round;
-	boundary_south = Math.floor((boundary_south-boundary_round) / boundary_round) * boundary_round;
-	boundary_west = Math.floor((boundary_west-boundary_round) / boundary_round) * boundary_round;
-	boundary_east = Math.floor((boundary_east+boundary_round) / boundary_round) * boundary_round;
-	
-	rectangle.setOptions({
-		strokeColor: '#FF0000',
-		strokeOpacity: 0.8,
-		strokeWeight: 2,
-//		fillColor: '#FF0000',
-		fillOpacity: 0,
-		map: map,
-		bounds: {
-			north: boundary_north,
-			south: boundary_south,
-			east: boundary_east,
-			west: boundary_west
-		}
-	});
-	
-	console.log('map-data-round zoom=' + zoom + ' lat=' + boundary_north + '-' + boundary_south + ', lng=' + boundary_west + '-' + boundary_east);
-	
-	var squares=0;
-	for (var i_y = boundary_south; i_y < boundary_north; i_y += boundary_round)
-	{
-//		i_y=i_y.toFixed(3);
-		for (var i_x = boundary_west; i_x < boundary_east; i_x += boundary_round)
-		{
-//			i_x=i_x.toFixed(3);
-			squares = squares + 1;
-			var i_x_=i_x.toFixed(3);
-			var i_x_to_ = (i_x_ + boundary_round);
-//				i_x_to_ = i_x_to_.toFixed(3);
-			var i_y_=i_y.toFixed(3);
-			var i_y_to_ = (i_y_ + boundary_round);
-//				i_y_to_ = i_y_to_.toFixed(3);
-			console.log(' square[' + squares + '] x=' + i_x_ + ' y=' + i_y_);
-			// square start
-	
     $.ajax({
         url: "map-data",
         type: 'GET',
-        data: {
-			  'boundary-north': i_y_to_,
-			  'boundary-west': i_x_,
-			  'boundary-south': i_y_,
-			  'boundary-east': i_x_to_,
-			  'pokemon': localStorage.displayPokemons,
-           'gyms': localStorage.displayGyms
-		  },
+        data: {'pokemon': localStorage.displayPokemons,
+               'gyms': localStorage.displayGyms},
         dataType: "json"
     }).done(function(result) {
         statusLabels(result["server_status"]);
@@ -587,11 +521,6 @@ function updateMap() {
         $lastRequestLabel.addClass('label-danger');
         $lastRequestLabel.html("Disconnected from Server")
     });
-    
-   // square end
-		}
-	}
-    
 }
 
 window.setInterval(updateMap, 10000);

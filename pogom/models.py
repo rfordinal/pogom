@@ -4,7 +4,6 @@
 import logging
 import random
 import math
-from flask import request
 from peewee import Model, SqliteDatabase, InsertQuery, IntegerField, \
     CharField, FloatField, BooleanField, DateTimeField, fn, SQL
 from datetime import datetime
@@ -54,10 +53,6 @@ class Pokemon(BaseModel):
         query = (Pokemon
                  .select()
                  .where(Pokemon.disappear_time > datetime.utcnow())
-                 .where(Pokemon.latitude < request.values.get('boundary-north', type=float))
-                 .where(Pokemon.latitude > request.values.get('boundary-south', type=float))
-                 .where(Pokemon.longitude > request.values.get('boundary-west', type=float))
-                 .where(Pokemon.longitude < request.values.get('boundary-east', type=float))
                  .dicts())
 
         pokemons = []
