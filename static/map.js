@@ -594,7 +594,7 @@ function updateMap() {
     
 }
 
-window.setInterval(updateMap, 10000);
+window.setInterval(updateMap, 30000);
 
 $('#gyms-checkbox').change(function() {
     localStorage.displayGyms = this.checked;
@@ -747,4 +747,4 @@ var updateLabelDiffTime = function() {
     });
 };
 
-window.setInterval(updateLabelDiffTime, 30000);
+window.setInterval(updateLabelDiffTime, 5000);
