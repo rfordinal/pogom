@@ -479,9 +479,10 @@ function updateMap() {
 	
 	var boundary_round = 0.005; // 0.002
 	
-	if (zoom >= 15){boundary_round = 0.02;}
-	else if (zoom >= 10){boundary_round = 0.1;}
-	else {boundary_round = 0.5}
+	if (zoom >= 13){boundary_round = 0.05;}
+	else if (zoom >= 11){boundary_round = 0.2;}
+	else if (zoom >= 9){boundary_round = 1;}
+	else {boundary_round = 2}
 	
 //	console.log('map-data zoom=' + zoom + ' lat=' + boundary_north.toFixed(3) + '-' + boundary_south.toFixed(3) + ', lng=' + boundary_west.toFixed(3) + '-' + boundary_east.toFixed(3));
 	
@@ -513,7 +514,7 @@ function updateMap() {
 		if (rectangle_markers[i]){rectangle_markers[i].setMap(null);}
 	}
 	
-	if (zoom <= 11)
+	if (zoom <= 8)
 	{
 		return
 	}
@@ -543,7 +544,7 @@ function updateMap() {
 			var i_y_to_ = (i_y + boundary_round);
 				i_y_to_ = i_y_to_.toFixed(3);
 			
-			if (squares > 12){break};	
+			if (squares > 20){break};	
 			
 			if (rectangles_debug)
 			{
