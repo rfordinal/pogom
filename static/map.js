@@ -11,9 +11,10 @@ var excludedPokemon = [];
 
 var map;
 var rectangle;
-var rectangles=[];
-var rectangles_debug=0;
-var rectangle_markers=[];
+var rectangles = [];
+var rectangles_debug = 0;
+var rectangles_load = {};
+var rectangle_markers = [];
 var scanLocations = new Map();
 var coverCircles = [];
 var newLocationMarker;
@@ -573,9 +574,16 @@ function updateMap() {
 				console.log(' square[' + squares + '] x=' + i_x_ + '-' + i_x_to_ + ' y=' + i_y_ + '-' + i_y_to_);
 			}
 			// square start
-	
-    if (ga){ga('send', 'event', 'map', 'load', i_y_to_ + ':' + i_y_ + ',' + i_x_ + ':' + i_x_to_);}
-    $.ajax({
+	 
+    var square_str = i_y_to_ + ':' + i_y_ + ',' + i_x_ + ':' + i_x_to_;
+    if (rectangles_load[square_str] && rectangles_load[square_str].readyState == 1)
+    {
+//		 console.log('still loading');
+		 continue;
+	 }
+	 
+    if (ga){ga('send', 'event', 'map', 'load', square_str);}
+    rectangles_load[square_str]=$.ajax({
         url: "map-data",
         type: 'GET',
         data: {
