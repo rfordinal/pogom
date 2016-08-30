@@ -802,4 +802,4 @@ var updateLabelDiffTime = function() {
     });
 };
 
-window.setInterval(updateLabelDiffTime, 5000);
+window.setInterval(updateLabelDiffTime, 1000);
