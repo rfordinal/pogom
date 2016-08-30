@@ -600,12 +600,16 @@ function updateMap() {
         statusLabels(result["server_status"]);
 
         updateScanLocations(result['scan_locations']);
-
+        
         $.each(result.pokemons, function(i, item){
             if (!document.getElementById('pokemon-checkbox').checked) {
                 return false; // in case the checkbox was unchecked in the meantime.
             }
-
+				if (item.disappear_time < new Date().getTime()) // outdated json with old data (proxy?)
+				{
+					
+				}
+            else
             if (!(item.encounter_id in map_pokemons) &&
                     excludedPokemon.indexOf(item.pokemon_id) < 0) {
                 // add marker to map and item to dict
