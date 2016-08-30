@@ -574,6 +574,7 @@ function updateMap() {
 			}
 			// square start
 	
+    if (ga){ga('send', 'event', 'map', 'load', i_y_to_ + ':' + i_y_ + ',' + i_x_ + ':' + i_x_to_);}
     $.ajax({
         url: "map-data",
         type: 'GET',
