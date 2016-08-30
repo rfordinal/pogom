@@ -11,6 +11,9 @@ var excludedPokemon = [];
 
 var map;
 var rectangle;
+var rectangles=[];
+var rectangles_debug=0;
+var rectangle_markers=[];
 var scanLocations = new Map();
 var coverCircles = [];
 var newLocationMarker;
@@ -475,16 +478,18 @@ function updateMap() {
 	
 	var boundary_round = 0.005; // 0.002
 	
-	if (zoom >= 18){boundary_round = 0.05;}
-	else if (zoom >= 16){boundary_round = 0.03;}
-	else if (zoom >= 10){boundary_round = 0.2;}
+	if (zoom >= 15){boundary_round = 0.02;}
+	else if (zoom >= 10){boundary_round = 0.1;}
 	else {boundary_round = 0.5}
 	
-	boundary_north = Math.floor((boundary_north+boundary_round) / boundary_round) * boundary_round;
-	boundary_south = Math.floor((boundary_south-boundary_round) / boundary_round) * boundary_round;
-	boundary_west = Math.floor((boundary_west-boundary_round) / boundary_round) * boundary_round;
-	boundary_east = Math.floor((boundary_east+boundary_round) / boundary_round) * boundary_round;
+//	console.log('map-data zoom=' + zoom + ' lat=' + boundary_north.toFixed(3) + '-' + boundary_south.toFixed(3) + ', lng=' + boundary_west.toFixed(3) + '-' + boundary_east.toFixed(3));
 	
+	boundary_north = parseFloat((Math.ceil(boundary_north / boundary_round) * boundary_round).toFixed(3));
+	boundary_south = parseFloat((Math.floor(boundary_south / boundary_round) * boundary_round).toFixed(3));
+	boundary_west = parseFloat((Math.floor(boundary_west / boundary_round) * boundary_round).toFixed(3));
+	boundary_east = parseFloat((Math.ceil(boundary_east / boundary_round) * boundary_round).toFixed(3));
+	
+/*	
 	rectangle.setOptions({
 		strokeColor: '#FF0000',
 		strokeOpacity: 0.8,
@@ -499,16 +504,36 @@ function updateMap() {
 			west: boundary_west
 		}
 	});
+*/
 	
-	console.log('map-data-round zoom=' + zoom + ' lat=' + boundary_north + '-' + boundary_south + ', lng=' + boundary_west + '-' + boundary_east);
+	for (var i = 1; i<20; i+=1)
+	{
+		if (rectangles[i]){rectangles[i].setMap(null);}
+		if (rectangle_markers[i]){rectangle_markers[i].setMap(null);}
+	}
+	
+	if (zoom <= 11)
+	{
+		return
+	}
 	
 	var squares=0;
 	for (var i_y = boundary_south; i_y < boundary_north; i_y += boundary_round)
 	{
-//		i_y=i_y.toFixed(3);
+		i_y = parseFloat(i_y.toFixed(3));
+		if (i_y >= boundary_north){
+			break
+		};
+//		console.log('i_y=' + i_y);
+		
 		for (var i_x = boundary_west; i_x < boundary_east; i_x += boundary_round)
 		{
-//			i_x=i_x.toFixed(3);
+			i_x = parseFloat(i_x.toFixed(3));
+			if (i_x >= boundary_east){
+				break 
+			};
+//			console.log('i_x=' + i_x);
+			
 			squares = squares + 1;
 			var i_x_=i_x.toFixed(3);
 			var i_x_to_ = (i_x + boundary_round);
@@ -516,7 +541,37 @@ function updateMap() {
 			var i_y_=i_y.toFixed(3);
 			var i_y_to_ = (i_y + boundary_round);
 				i_y_to_ = i_y_to_.toFixed(3);
-			console.log(' square[' + squares + '] x=' + i_x_ + '-' + i_x_to_ + ' y=' + i_y_ + '-' + i_y_to_);
+			
+			if (squares > 12){break};	
+			
+			if (rectangles_debug)
+			{
+				if (!rectangles[squares]){rectangles[squares] = new google.maps.Rectangle();}
+				if (!rectangle_markers[squares]){rectangle_markers[squares] = new google.maps.Marker();}
+				rectangles[squares].setOptions({
+					strokeColor: '#FF0000',
+					strokeOpacity: 0.8,
+					strokeWeight: 2,
+			//		fillColor: '#FF0000',
+					fillOpacity: 0,
+					map: map,
+					bounds: {
+						north: parseFloat(i_y_to_),
+						south: parseFloat(i_y_),
+						east: parseFloat(i_x_to_),
+						west: parseFloat(i_x_)
+					}
+				});
+				rectangle_markers[squares].setOptions({
+					title: 'Square #' + squares,
+					map: map,
+					position: {
+						lat: parseFloat(i_y_) + (boundary_round/2),
+						lng: parseFloat(i_x_) + (boundary_round/2)
+					}
+				});
+				console.log(' square[' + squares + '] x=' + i_x_ + '-' + i_x_to_ + ' y=' + i_y_ + '-' + i_y_to_);
+			}
 			// square start
 	
     $.ajax({
@@ -591,7 +646,7 @@ function updateMap() {
    // square end
 		}
 	}
-    
+   console.log('get map-data zoom=' + zoom + ' sqr size=' + boundary_round + ' cnt=' + squares + ' lat=' + boundary_north.toFixed(3) + '-' + boundary_south.toFixed(3) + ', lng=' + boundary_west.toFixed(3) + '-' + boundary_east.toFixed(3));
 }
 
 window.setInterval(updateMap, 30000);
